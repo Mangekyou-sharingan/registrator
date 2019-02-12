@@ -289,17 +289,16 @@ func (b *Bridge) newService(port ServicePort, isgroup bool) *Service {
 		service.Name += "-" + port.ExposedPort
 	}
 	var p int
-
-    service.Network = strings.ToLower(mapDefault(metadata, "network", container.HostConfig.NetworkMode))
-    if b.config.Internal == true && service.Network != "host" {
-        log.Printf("service %s will use network %s", service.Name, service.Network)
-        network, exists := container.NetworkSettings.Networks[service.Network]
-        if !exists {
-            service.IP = port.ExposedIP
-        } else {
-            service.IP = network.IPAddress
-        }
-        p, _ = strconv.Atoi(port.ExposedPort)
+	service.Network = strings.ToLower(mapDefault(metadata, "network", container.HostConfig.NetworkMode))
+	if b.config.Internal == true && service.Network != "host" {
+		log.Printf("service %s will use network %s", service.Name, service.Network)
+		network, exists := container.NetworkSettings.Networks[service.Network]
+		if !exists {
+			service.IP = port.ExposedIP
+		} else {
+			service.IP = network.IPAddress
+		}
+		p, _ = strconv.Atoi(port.ExposedPort)
 	} else {
 		service.IP = port.HostIP
 		p, _ = strconv.Atoi(port.HostPort)
